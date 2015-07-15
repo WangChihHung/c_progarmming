@@ -16,5 +16,6 @@ int main(void)
 	
 	printf("c:%d\n",c);
 	
+	printf("github test.\n");
 	return 0;
 }
