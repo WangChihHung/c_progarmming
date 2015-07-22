@@ -1,5 +1,4 @@
 /*Lesson 14E*/
-/*non-complite*/
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,7 +19,7 @@ int main(void)
 {
 	Gaku *student,*cnt;
 	
-	student = malloc(sizeof(Gaku)*2);
+	student = malloc(sizeof(Gaku)*100);
 	
 	input_data(student);
 	
@@ -33,35 +32,34 @@ int main(void)
 
 void input_data(Gaku *student)
 {
-	int i=0;
-	
-	
+	//int i=0;
 	printf("学籍番号-->");
-	while(scanf("%s",student[i].g_no)!=EOF)
+	while(scanf("%s",student->g_no)!=EOF)
 	{
+		
 		fflush(stdin);
 		
 		printf("科目１-->");
-		scanf("%d",&student[i].g_kamoku1);
+		scanf("%d",&student->g_kamoku1);
 		
 		printf("科目２-->");
-		scanf("%d",&student[i].g_kamoku2);
+		scanf("%d",&student->g_kamoku2);
 		
-		student->heikin = (double)(student[i].g_kamoku1 + student[i].g_kamoku2) / 2 ;
+		student->heikin = (double)(student->g_kamoku1 + student->g_kamoku2) / 2 ;
 		
+		student->p_next_p = student+1;
 		
-		student->p_next_p = &student[i+1];
+		printf("%s\t%d\t%d\t%.1f",student->g_no,student->g_kamoku1,student->g_kamoku2,student->heikin);
 		
-		printf("student[%d]:%p\tstudent[%d]:%p\n",i,&student[i],i+1,&student[i+1]);
+		//printf("student[%d]:%p\tstudent[%d].p_next_p:%p\n",i+1,&student[i+1],i,student->p_next_p);
 		
-		i++;
+		//i++;
 		
-		student = realloc(student,sizeof(Gaku)*2+i);
-		
+		student++;
 		printf("\n学籍番号-->");
 	}
 	
-	student[i-1].p_next_p = NULL;
+	(student-1)->p_next_p = NULL;
 }
 
 void print_out(Gaku *student,Gaku *data)
