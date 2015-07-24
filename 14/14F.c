@@ -12,7 +12,7 @@ typedef struct Gakusei
 int main(void)
 {
 	Gakusei *student,*cnt;
-	int i=0;
+	int i=0,j,k,min;
 	
 	student = malloc(sizeof(Gakusei)*2);
 	
@@ -30,14 +30,32 @@ int main(void)
 		
 		fflush(stdin);
 		
-		student[i].next = &student[i+1];
 		
 		i++;
 		
-		student = realloc(student,sizeof(Gakusei)*2+i);
+		student = realloc(student,sizeof(Gakusei)*(2+i));
 	}
 	
-	student[i-1].next = NULL;
+	
+	for(j=0;j<i-1;j++)
+	{
+		min = j;
+		for(k=j+1;k<i;k++)
+		{
+			//printf("j=%d:%d\t K=%d:%d\n",j,atoi(&student[j].bango[2]),k,atoi(&student[k].bango[2]));
+			min = (atoi(&student[min].bango[2]) > atoi(&student[k].bango[2])) ? k : min;	
+		}
+		//printf("min=%d\n",min);
+		student[i] = student[j];
+		student[j] = student[min];
+		student[min] = student[i];
+	}
+	
+	for(j=0;j<i;j++)
+	{
+		student[j].next = &student[j+1];
+	}
+	student[j-1].next = NULL;
 	
 	for(cnt = &student[0];cnt != NULL; cnt = cnt->next)
 	{
