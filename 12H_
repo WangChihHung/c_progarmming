@@ -1,0 +1,94 @@
+/*Lesson 12H function type*/
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct student
+{
+	int s_gumi;
+	char s_no[7];
+	char s_name[20];
+	int s_score_1;
+	int s_score_2;
+}student;
+
+int load_data_temp(FILE*,student*);
+void data_operate(FILE*,student*);
+
+int main(void)
+{
+	
+	FILE *seiseki;
+	student data[100];
+	int i,ninsu;
+	
+	
+	seiseki = fopen("kadai12h.dat","r");
+	if (seiseki == NULL)
+	{
+		printf("Data open error!!\n");
+		exit(1);
+	}
+	
+	data_operate(seiseki,data);
+	
+	
+	
+	
+	
+	for(i=0;i<ninsu;i++)
+	{
+		printf("%s\t　%s\t%*d\t%*d\t%*d\n",data[i].s_no,data[i].s_name,6,data[i].s_score_1,6,data[i].s_score_2,4,(data[i].s_score_1+data[i].s_score_2)/2);
+	
+	}
+	
+	fclose(seiseki);
+	
+	return 0;
+}
+
+void data_operate(FILE *seiseki,student *data)
+{
+	
+	load_data_temp(seiseki,data);
+	
+}
+
+int load_data_temp(FILE *seiseki,student *data)
+{
+	int cnt=0;
+	while((fscanf(seiseki,"%d %s %s %d %d",&data->s_gumi,data->s_no,data->s_name,&data->s_score_1,&data->s_score_2))!=EOF)
+	{
+		data++;
+		cnt++;
+	}
+	return cnt;
+}
+
+/*
+int main(void)
+{
+	ファイルを読み込む 
+	
+     成績ファイルを処理する関数を呼ぶ 
+	
+	 終了 
+}
+
+成績ファイルを処理する関数 
+
+void seiseki(void *data)
+{
+	 成績ファイルを一行ずつ読み込む 
+	   if クラスが別のになった 
+	     組の計算処理をする関数を呼ぶ 
+	   end if 
+	 end for 
+}
+
+ クラスの計算をする関数 
+
+void class_calclate(char )
+{
+	 クラスの情報を貰って、 *組平均からの処理を出力する 
+}
+*/
