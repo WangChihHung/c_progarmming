@@ -9,17 +9,21 @@ typedef struct student
 	char s_name[20];
 	int s_score_1;
 	int s_score_2;
+	struct student *next;
 }student;
 
 int load_data_temp(FILE*,student*);
 void data_operate(FILE*,student*);
+void result_print(student*);
+void avg(student*,int,double*);
+
+//void data_sort(student*,int);
 
 int main(void)
 {
 	
 	FILE *seiseki;
 	student data[100];
-	int i,ninsu;
 	
 	
 	seiseki = fopen("kadai12h.dat","r");
@@ -29,17 +33,7 @@ int main(void)
 		exit(1);
 	}
 	
-	data_operate(seiseki,data);
-	
-	
-	
-	
-	
-	for(i=0;i<ninsu;i++)
-	{
-		printf("%s\t　%s\t%*d\t%*d\t%*d\n",data[i].s_no,data[i].s_name,6,data[i].s_score_1,6,data[i].s_score_2,4,(data[i].s_score_1+data[i].s_score_2)/2);
-	
-	}
+	data_operate(seiseki,data);	
 	
 	fclose(seiseki);
 	
@@ -48,47 +42,118 @@ int main(void)
 
 void data_operate(FILE *seiseki,student *data)
 {
+	int i,ninsu;
 	
-	load_data_temp(seiseki,data);
+	ninsu = load_data_temp(seiseki,data);
+	
+//	data_sort(data,ninsu);
+	
+	result_print(data);
 	
 }
 
 int load_data_temp(FILE *seiseki,student *data)
 {
-	int cnt=0;
-	while((fscanf(seiseki,"%d %s %s %d %d",&data->s_gumi,data->s_no,data->s_name,&data->s_score_1,&data->s_score_2))!=EOF)
+	int i=0,j;
+	while((fscanf(seiseki,"%d %s %s %d %d",	&data->s_gumi,
+											 data->s_no,
+											 data->s_name,
+											&data->s_score_1,
+											&data->s_score_2))!=EOF)
 	{
 		data++;
-		cnt++;
+		i++;
 	}
-	return cnt;
-}
-
-/*
-int main(void)
-{
-	ファイルを読み込む 
 	
-     成績ファイルを処理する関数を呼ぶ 
+	for (j=i;j>0;j--)
+	{
+		(data-j)->next = (data-j+1);
+	}
+	(data-1)->next = NULL;
 	
-	 終了 
+	return i;
 }
 
-成績ファイルを処理する関数 
 
-void seiseki(void *data)
+
+/*void data_sort(student *data,int ninsu)
 {
-	 成績ファイルを一行ずつ読み込む 
-	   if クラスが別のになった 
-	     組の計算処理をする関数を呼ぶ 
-	   end if 
-	 end for 
-}
+	int i,j,min;
+	student *temp;
+	printf("temp:%p\n",temp);
+	for(i=0;i<ninsu-1;i++)
+	{
+		min = i;
+		for(j=i+1;j<ninsu;j++)
+		{
+			min = (atoi((data+min)->s_no) > atoi((data+j)->s_no)) ? j : min;
+		}
+		temp = (data+j);
+		(data+j) = (data+min);
+		(data+min) = temp;
+	}
+	
+	for(i=0;i<ninsu-1;i++)
+	{
+		data[i].next = &data[i+1];
+	}
+	data[i].next = NULL;
+	printf("temp:%p\n",temp);
+	
+}*/
 
- クラスの計算をする関数 
 
-void class_calclate(char )
+void avg(student *data,int gumi,double *heikin)
 {
-	 クラスの情報を貰って、 *組平均からの処理を出力する 
+	int sum[2]={0};
+	int cnt=0;
+	student *i;
+	
+	for(i = data; i!=NULL; i = i -> next)
+	{
+		if(i->s_gumi == gumi)
+		{
+			sum[0] += i->s_score_1;
+			sum[1] += i->s_score_2;
+			cnt++;
+		}
+		if(gumi==0)
+		{
+			sum[0] += i->s_score_1;
+			sum[1] += i->s_score_2;
+			cnt++;
+		}
+	}
+	
+	*heikin = (double)sum[0]/cnt;
+	*(heikin+1) = (double)sum[1]/cnt;
+	
 }
-*/
+
+void result_print(student *data)
+{
+	double heikin[2];
+	student *cnt;
+	
+	printf("学籍番号　氏名\t\t科目１\t科目２\t平均\n");
+	
+	for(cnt = data;cnt!=NULL;cnt = cnt->next)
+	{
+		printf("%s\t　",cnt->s_no);
+		printf("%s\t",cnt->s_name);
+		printf("%*d\t",6,cnt->s_score_1);
+		printf("%*d\t",6,cnt->s_score_2);
+		printf("%*d\n",4,(cnt->s_score_1+cnt->s_score_2)/2);
+		
+		
+		if(cnt->s_gumi != (cnt+1)->s_gumi)
+		{
+			avg(data,cnt->s_gumi,heikin);
+			printf("%d組平均　\t\t%*.1f\t%*.1f\n\n",cnt->s_gumi,6,heikin[0],6,heikin[1]);
+		}
+		
+	}
+	avg(data,0,heikin);
+	printf("全体平均　\t\t%*.1f\t%*.1f\n",6,heikin[0],6,heikin[1]);
+}
+
