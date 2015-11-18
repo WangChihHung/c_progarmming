@@ -1,0 +1,94 @@
+/****************/
+/* 問題07 課題1 */
+/****************/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct Gaku{
+	char   g_no[7];
+	int    g_kamoku1;
+	int    g_kamoku2;
+	double g_heikin;
+	struct Gaku *g_next_p;
+}Gaku;
+
+//void input(Gaku*,int);
+
+int main(void)
+{
+	Gaku *g_top,*dat,*printp;
+	int i;
+	
+	
+	dat = (Gaku *)malloc(sizeof(Gaku));
+	g_top = dat;
+	dat-> g_next_p = NULL;
+	i=0;
+	
+	while(printf("学籍番号-->"),scanf("%s",dat->g_no) != EOF)
+	{
+		
+		printf("科目１-->");
+		scanf("%d",&dat->g_kamoku1);
+		
+		printf("科目２-->");
+		scanf("%d",&dat->g_kamoku2);
+		
+		dat->g_heikin = (double) (dat->g_kamoku1+dat->g_kamoku2)/2;
+		
+		printp = dat; 		// or printp = printp->g_next_p;
+		
+		dat->g_next_p = (Gaku *)malloc(sizeof(Gaku));
+		
+		dat = dat->g_next_p;
+		dat->g_next_p = NULL;
+		i++;
+	}
+	
+	
+	// Gakuの最末尾をprintpに,新しい用意される空領域を解放する 
+	
+	printp->g_next_p = NULL;
+	free(dat);
+	
+	
+	if(i != 0)
+	{
+		printf("\n");
+		dat = g_top;
+		
+		while( dat != NULL )
+		{
+			printf("学籍番号:%s\n科目１:%d\n科目２:%d\n平均:%.1f\n",dat->g_no,
+																	dat->g_kamoku1,
+																	dat->g_kamoku2,
+																	dat->g_heikin);
+			dat = dat -> g_next_p;
+		}
+		
+		
+		while(printp != g_top)
+		{
+			dat = g_top;
+			while(dat->g_next_p != NULL)
+			{
+				printp = dat;
+				dat = dat->g_next_p;
+			}
+			free(dat);
+			printp->g_next_p = NULL;
+		}
+		
+		free(printp);
+		
+		
+		
+		
+		
+		
+	}
+	
+	
+	
+	return 0;
